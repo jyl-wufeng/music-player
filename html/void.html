@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link  href="../css/barstyle.css" rel="stylesheet">
+<script src="../js/jquery.js"></script>
+<script src="../js/jquery-PlayBar.min.js"></script>
+<script src="../appjs/LyricSynchronization.js"></script>
+<script type="text/javascript" src='../js/bootstrap.js'></script>
+<link href="../css/bootstrap.css" rel="stylesheet" />
+
+<style>
+ .play{
+   background-image:url(../img/6.ico);
+   background-repeat:no-repeat;
+   padding:15px 25px 25px 25px;
+   background-size:50px 50px;
+}
+ .prev{
+   background-image:url(../img/9.ico);
+   background-repeat:no-repeat;
+   padding:15px 25px 25px 25px;
+   background-size:50px 50px;
+}
+ .next{
+   background-image:url(../img/1.ico);
+   background-repeat:no-repeat;
+   padding:15px 25px 25px 25px;
+   background-size:50px 50px;
+}
+.u{list-style:none;
+ font-family:"宋体";
+ color:#0f59e1;
+ font-size:30px;
+ text-align:center}
+ .divcss5{margin:0 auto;
+         border:0px solid #000;
+         width:800px;
+         height:500px}
+
+ .box{ filter:alpha(Opacity=50); 
+       opacity: 0.5; }
+ .botton{position:fixed;
+         bottom:30px;
+       
+         height:100;
+         padding-left:100px;
+        
+  }
+  .prny{width:150px;
+        height:50px;
+        float:left;
+        line-height:50px;
+ }
+  .test{
+	  width:800px;
+	  height:50px;
+	  line-height:50px;
+	  float:left;
+  }
+  
+</style>
+
+<script>
+var lrc=`[ver:v1.0]
+[ti:晴天-周杰伦]
+
+[00:00.82]晴天
+[00:05.82]演唱：周杰伦
+[00:14.82]
+[00:29.27]故事的小黄花
+[00:32.30]从出生那年就飘着
+[00:35.83]童年的荡秋千
+[00:39.26]随记忆一直晃到现在
+[00:42.84]rui sou sou xi dou xi la
+[00:45.72]sou la xi xi xi xi la xi la sou
+[00:49.60]吹着前奏望着天空
+[00:52.92]我想起花瓣试着掉落
+[00:56.25]为你翘课的那一天
+[00:58.27]花落的那一天
+[00:59.79]教室的那一间
+[01:01.60]我怎么看不见
+[01:03.67]消失的下雨天
+[01:05.28]我好想再淋一遍
+[01:10.07]没想到失去的勇气我还留着
+[01:15.27]好想再问一遍
+[01:17.49]你会等待还是离开
+[01:24.34]刮风这天我试过握着你手
+[01:30.04]但偏偏雨渐渐大到我看你不见
+[01:38.51]还要多久我才能在你身边
+[01:44.92]等到放晴的那天也许我会比较好一点
+[01:52.43]从前从前有个人爱你很久
+[01:58.07]但偏偏风渐渐把距离吹得好远
+[02:06.40]好不容易又能再多爱一天
+[02:13.01]但故事的最后你好像还是说了拜拜
+[02:34.44]为你翘课的那一天
+[02:36.26]花落的那一天
+[02:38.02]教室的那一间
+[02:39.89]我怎么看不见
+[02:41.75]消失的下雨天
+[02:43.52]我好想再淋一遍
+[02:47.76]没想到失去的勇气我还留着
+[02:54.21]好想再问一遍
+[02:55.77]你会等待还是离开
+[03:02.48]刮风这天我试过握着你手
+[03:08.07]但偏偏雨渐渐大到我看你不见
+[03:16.55]还要多久我才能在你身边
+[03:22.95]等到放晴的那天也许我会比较好一点
+[03:30.42]从前从前有个人爱你很久
+[03:36.72]偏偏风渐渐把距离吹得好远
+[03:44.84]好不容易又能再多爱一天
+[03:51.04]但故事的最后你好像还是说了拜拜
+[03:59.00]刮风这天我试过握着你手
+[04:01.47]但偏偏雨渐渐大到我看你不见
+[04:05.06]还要多久我才能够在你身边
+[04:08.49]等到放晴那天也许我会比较好一点
+[04:12.62]从前从前有个人爱你很久
+[04:15.49]但偏偏雨渐渐把距离吹得好远
+[04:18.81]好不容易又能再多爱一天
+[04:22.60]但故事的最后你好像还是说了
+
+`;
+ var implTime = 0; //已播放时间
+ var timens = []; //定时器
+ var stateMusi = "N"; //N表示未播放
+ let lrcObj;
+ let BeingPlayed;
+ let musicList=[];
+
+  let star=(music,ins="N")=>{
+    music.play();
+          $("#run").css({
+            "background-image": "url(../img/4.ico)"
+          });
+          if(ins=="N"){
+          if (stateMusi == "N") {
+            let musicTime=LyricSynchronization.getmusicTime();
+             $.playBar.Stop();
+            $.playBar.addBar($('.test'), musicTime * 1000);
+          } else {
+
+            $.playBar.Begin();
+          }}
+          var begintime = $("div.BarBeginTime").html().split(":");
+          music.currentTime = Number(begintime[0]) * 60 + Number(begintime[1]);
+          implTime = music.currentTime * 1000;
+          timens=LyricSynchronization.srt(lrcObj);
+
+  };
+  let stop=(music,ins="N")=>{
+   LyricSynchronization.clear(timens);
+          music.pause();
+           if(ins=="N"){
+          $.playBar.Stop();}
+          stateMusi = "Y";
+          $("#run").css({
+            "background-image": "url(../img/6.ico)"
+          });
+  }
+  let MusicInri=(data)=>{
+     let i=0;
+    for(let mus in data){
+      musicList[i]=data[mus].NAME;
+      i++;
+      $("#singer").append('<a href="#" onclick="SwitctMusic(this)" class="list-group-item list-group-item-info">'+data[mus].NAME+'</a>');
+    }
+  }
+  function SwitctMusic(e,music="N"){
+    if(music=='N'){
+    musicName=e.innerHTML;}else{
+      musicName=music;
+    }
+    BeingPlayed=musicName;
+    $.ajax({
+        url: 'http://localhost:8080/tjjyl/xxmusic/readLrc.action',
+        dataType: "text",
+        type: "POST",
+        data: {LrcName:musicName},
+        success: comments => {
+          lrc=comments;
+          music = $('#my_music')[0];
+          music.pause();
+          music.setAttribute("src",'../music/'+musicName+'.mp3');
+          LyricSynchronization.clear(timens);
+          $("#listar").empty();
+          lrcObj= LyricSynchronization.Initialization(lrc,"listar");
+           stateMusi="N";
+          star($('#my_music')[0]);
+
+
+        },
+        error: (xhr, status, err) => {
+          console.log(err.toString());
+        //  this.setState({comments: comments});
+        }
+      });
+
+  }
+  let Initialization_Music=(music)=>{
+   var tollerlist = ['Util_Select_Music',2,3,4,5,6,7,8,9];
+      $.ajax({
+        url: 'http://localhost:8080/tjjyl/xxsuper/dosuper.action',
+        dataType: "json",
+        type: "POST",
+        data: {tollerlist:tollerlist,key:'Util_Select_Music'},
+        success: comments => {
+          console.log(comments[0].NAME);
+          MusicInri(comments);
+
+        },
+        error: (xhr, status, err) => {
+          console.log(err.toString());
+        //  this.setState({comments: comments});
+        }
+      });
+
+  }
+  
+  $(function() {
+    music = $('#my_music')[0];
+    Initialization_Music(music);
+    $("#my_music").hide();
+    $.playBar.addBar($('.test'), 0); //第一个参数是需要显示播放器的容器，第二个参数为时间，单位毫秒
+    lrcObj= LyricSynchronization.Initialization(lrc,"listar"); //初始化歌词
+    $("#run").click(
+      function() {
+        if (music.paused == true) {
+       star(music);
+        } else {
+          stop(music);
+        }   
+      });
+    $("#prev").click(
+      function() {
+        let i;
+        for(let index in musicList){
+          if(musicList[index]==BeingPlayed){
+            i=index;
+            break;
+          }
+        }
+        if(i-1<0){
+          SwitctMusic('null',musicList[musicList.length-1]);
+        }else{ SwitctMusic('null',musicList[i-1]);}
+      
+       /* if(BeingPlayed!=undefined){
+       SwitctMusic(prevBedin);}else{
+       console.log($("div a:last-child").length) 
+       }*/
+        }   
+      );
+     $("#next").click(
+      function() {
+        let i;
+        for(let index in musicList){
+          if(musicList[index]==BeingPlayed){
+            i=index;
+            break;
+          }
+        }
+        if(parseInt(i)+1>musicList.length-1){
+          SwitctMusic('null',musicList[0]);
+        }else{ SwitctMusic('null',musicList[parseInt(i)+1]);}
+      
+       /* if(BeingPlayed!=undefined){
+       SwitctMusic(prevBedin);}else{
+       console.log($("div a:last-child").length) 
+       }*/
+        }   
+      );
+
+  })
+
+	</script>
+</head>
+<body>
+
+<audio id="my_music" controls="controls" src='../music/周杰伦 - 晴天.mp3'>44</audio>
+<div style="width:300px;float:left;padding:55px 0px 0px 65px;">
+<div class="list-group" id="singer">
+
+
+</div>
+</div>
+<div >
+<div style="height:100px"></div>
+<div class="divcss5">
+	<ul class="u" id="listar">
+		<li >&nbsp;</li>
+	</ul>
+</div>
+</div>
+</div>
+<div class="botton">
+	<div class="prny">
+	<span id="prev" class='prev'></span>
+    <span id="run" class='play'></span>
+    <span id="next" class='next'></span>
+   </div>
+<div class="test" style="color:#126cdb"></div>
+</div>
+
+
+</body>
+</html>
